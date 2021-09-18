@@ -1,13 +1,15 @@
-require('dotenv').config();
-import 'reflect-metadata';
-import express from 'express';
-import { createConnection } from 'typeorm';
-import { User } from './entities/User';
-import { ApolloServer } from 'apollo-server-express';
-import { buildSchema } from 'type-graphql';
-import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
-import { createServer } from 'http';
-import { HelloResolver } from './resolvers/hello';
+require('dotenv').config()
+import 'reflect-metadata'
+import express from 'express'
+import { createConnection } from 'typeorm'
+import { User } from './entities/User'
+import { ApolloServer } from 'apollo-server-express'
+import { buildSchema } from 'type-graphql'
+import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core'
+import { createServer } from 'http'
+import { HelloResolver } from './resolvers/hello'
+import { UserResolver } from './resolvers/user'
+import { Context } from './types/Context'
 
 const main = async () => {
   await createConnection({
@@ -17,40 +19,38 @@ const main = async () => {
     password: process.env.DB_PASSWORD_DEV,
     logging: true,
     synchronize: true,
-    entities: [User],
-  });
+    entities: [User]
+  })
 
-  const app = express();
+  const app = express()
 
-  const httpServer = createServer(app);
+  const httpServer = createServer(app)
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver],
-      validate: false,
+      resolvers: [HelloResolver, UserResolver],
+      validate: false
     }),
-    // context: ({ req, res }): Context => ({
-    // 	req,
-    // 	res,
-    // 	connection,
-    // 	dataLoaders: buildDataLoaders()
-    // }),
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-  });
+    context: ({ req, res }): Context => ({ req, res }),
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })]
+  })
 
-  await apolloServer.start();
+  await apolloServer.start()
 
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({
+    app,
+    cors: { origin: 'https://studio.apollographql.com', credentials: true } // in addition to change settings in studio apollo
+  })
 
-  const PORT = process.env.PORT || 4000;
+  const PORT = process.env.PORT || 4000
 
-  await new Promise((resolve) =>
+  await new Promise(resolve =>
     httpServer.listen({ port: PORT }, resolve as () => void)
-  );
+  )
 
   console.log(
     `Server started on port ${PORT}. GraphQL endpoint on http://localhost:${PORT}/graphql or http://localhost:${PORT}${apolloServer.graphqlPath}`
-  );
-};
+  )
+}
 
-main().catch((error) => console.log(error));
+main().catch(error => console.log(error))
