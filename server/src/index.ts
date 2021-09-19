@@ -7,7 +7,7 @@ import { ApolloServer } from 'apollo-server-express'
 import { buildSchema } from 'type-graphql'
 import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core'
 import { createServer } from 'http'
-import { HelloResolver } from './resolvers/hello'
+import { GreetingResolver } from './resolvers/greeting'
 import { UserResolver } from './resolvers/user'
 import { Context } from './types/Context'
 
@@ -24,14 +24,23 @@ const main = async () => {
 
   const app = express()
 
+  // To refresh token
+  app.post('/refresh_token', req => {
+    console.log(req.headers)
+    console.log(req.cookies) // tuong la se doc duoc cookie nhung k duoc, can phai co cookie-parser
+  })
+
   const httpServer = createServer(app)
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, UserResolver],
+      resolvers: [GreetingResolver, UserResolver],
       validate: false
     }),
-    context: ({ req, res }): Context => ({ req, res }),
+    context: ({ req, res }): Pick<Context, 'req' | 'res'> => ({
+      req,
+      res
+    }),
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })]
   })
 
@@ -47,6 +56,8 @@ const main = async () => {
   await new Promise(resolve =>
     httpServer.listen({ port: PORT }, resolve as () => void)
   )
+
+  // app.listen(5000, () => console.log(`REST server started on PORT 5000`))
 
   console.log(
     `Server started on port ${PORT}. GraphQL endpoint on http://localhost:${PORT}/graphql or http://localhost:${PORT}${apolloServer.graphqlPath}`
