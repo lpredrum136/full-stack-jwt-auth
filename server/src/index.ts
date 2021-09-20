@@ -10,6 +10,10 @@ import { createServer } from 'http'
 import { GreetingResolver } from './resolvers/greeting'
 import { UserResolver } from './resolvers/user'
 import { Context } from './types/Context'
+import cookieParser from 'cookie-parser'
+import { JwtPayload, Secret, verify } from 'jsonwebtoken'
+import { UserAuthPayload } from './types/UserAuthPayload'
+import { createToken, sendRefreshToken } from './utils/auth'
 
 const main = async () => {
   await createConnection({
@@ -24,10 +28,43 @@ const main = async () => {
 
   const app = express()
 
+  app.use(cookieParser())
+
   // To refresh token
-  app.post('/refresh_token', req => {
+  app.post('/refresh_token', async (req, res) => {
     console.log(req.headers)
     console.log(req.cookies) // tuong la se doc duoc cookie nhung k duoc, can phai co cookie-parser
+
+    const refreshToken =
+      req.cookies[process.env.REFRESH_TOKEN_COOKIE_NAME as string]
+
+    console.log('REFRESH TOKEN', refreshToken)
+
+    if (!refreshToken) return res.sendStatus(401)
+
+    try {
+      const decodedUser = verify(
+        refreshToken,
+        process.env.REFRESH_TOKEN_SECRET as Secret
+      ) as UserAuthPayload & JwtPayload
+
+      // token is valid
+      const user = await User.findOne(decodedUser.userId)
+
+      console.log('USER', user)
+
+      if (!user) return res.sendStatus(401)
+
+      sendRefreshToken(res, user)
+
+      return res.json({
+        success: true,
+        accessToken: createToken('accessToken', user)
+      })
+    } catch (error) {
+      console.log('ERROR REFRESHING TOKEN', error)
+      return res.sendStatus(403)
+    }
   })
 
   const httpServer = createServer(app)

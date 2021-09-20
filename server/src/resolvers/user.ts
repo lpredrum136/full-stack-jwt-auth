@@ -15,7 +15,7 @@ import { UserMutationResponse } from '../types/UserMutationResponse'
 import { RegisterInput } from '../types/RegisterInput'
 import { LoginInput } from '../types/LoginInput'
 import { Context } from '../types/Context'
-import { createToken } from '../utils/auth'
+import { createToken, sendRefreshToken } from '../utils/auth'
 // import { validateRegisterInput } from '../utils/validateRegisterInput'
 // import { LoginInput } from '../types/LoginInput'
 // import { Context } from '../types/Context'
@@ -103,11 +103,7 @@ export class UserResolver {
       }
 
     // return cookie
-    res.cookie(
-      'jwt-auth-cookie-name',
-      createToken('refreshToken', existingUser),
-      { httpOnly: true, secure: true, sameSite: 'none' }
-    )
+    sendRefreshToken(res, existingUser)
 
     return {
       code: 200,
