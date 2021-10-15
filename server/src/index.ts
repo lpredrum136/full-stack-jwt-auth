@@ -51,9 +51,9 @@ const main = async () => {
       // token is valid
       const user = await User.findOne(decodedUser.userId)
 
-      console.log('USER', user)
-
-      if (!user) return res.sendStatus(401)
+      if (!user || user?.tokenVersion !== decodedUser.tokenVersion) {
+        return res.sendStatus(401)
+      }
 
       sendRefreshToken(res, user)
 

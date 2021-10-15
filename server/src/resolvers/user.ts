@@ -2,6 +2,7 @@ import { User } from '../entities/User'
 import {
   Arg,
   Ctx,
+  ID,
   // Ctx,
   // FieldResolver,
   Mutation,
@@ -112,6 +113,21 @@ export class UserResolver {
       user: existingUser,
       accessToken: createToken('accessToken', existingUser)
     }
+  }
+
+  @Mutation(_return => Boolean)
+  async revokeRefreshTokens(
+    @Arg('userId', _type => ID) userId: number
+  ): Promise<boolean> {
+    const existingUser = await User.findOne(userId)
+
+    if (!existingUser) {
+      return false
+    }
+
+    existingUser.tokenVersion += 1
+    await existingUser.save()
+    return true
   }
 
   // @Mutation(_return => Boolean)
