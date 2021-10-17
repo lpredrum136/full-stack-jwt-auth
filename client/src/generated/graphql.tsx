@@ -95,6 +95,11 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserMutationResponse', code: number, success: boolean } };
 
+export type GoodbyeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GoodbyeQuery = { __typename?: 'Query', goodbye: string };
+
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -174,6 +179,38 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const GoodbyeDocument = gql`
+    query Goodbye {
+  goodbye
+}
+    `;
+
+/**
+ * __useGoodbyeQuery__
+ *
+ * To run a query within a React component, call `useGoodbyeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGoodbyeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGoodbyeQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGoodbyeQuery(baseOptions?: Apollo.QueryHookOptions<GoodbyeQuery, GoodbyeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GoodbyeQuery, GoodbyeQueryVariables>(GoodbyeDocument, options);
+      }
+export function useGoodbyeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GoodbyeQuery, GoodbyeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GoodbyeQuery, GoodbyeQueryVariables>(GoodbyeDocument, options);
+        }
+export type GoodbyeQueryHookResult = ReturnType<typeof useGoodbyeQuery>;
+export type GoodbyeLazyQueryHookResult = ReturnType<typeof useGoodbyeLazyQuery>;
+export type GoodbyeQueryResult = Apollo.QueryResult<GoodbyeQuery, GoodbyeQueryVariables>;
 export const HelloDocument = gql`
     query Hello {
   hello

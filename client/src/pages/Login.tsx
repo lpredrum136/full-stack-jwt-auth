@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useLoginMutation } from '../generated/graphql'
+import JWTManager from '../utils/jwt'
 
 const Login = () => {
   const [username, setUsername] = useState('')
@@ -10,7 +11,13 @@ const Login = () => {
   const [login, _] = useLoginMutation()
 
   const onSubmit = async () => {
-    await login({ variables: { loginInput: { username, password } } })
+    const response = await login({
+      variables: { loginInput: { username, password } }
+    })
+    if (response.data?.login.success) {
+      JWTManager.setToken(response.data.login.accessToken as string)
+    }
+    console.log('TOKEN FROM LOGIN', JWTManager.getToken())
     history.push('/')
   }
 
