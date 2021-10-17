@@ -6,7 +6,7 @@ import { checkAuth } from '../middleware/checkAuth'
 export class GreetingResolver {
   @Query()
   hello(): string {
-    return 'hello world henry'
+    return 'hello world henry 2 3'
   }
 
   @Query()

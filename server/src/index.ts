@@ -5,7 +5,10 @@ import { createConnection } from 'typeorm'
 import { User } from './entities/User'
 import { ApolloServer } from 'apollo-server-express'
 import { buildSchema } from 'type-graphql'
-import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core'
+import {
+  ApolloServerPluginDrainHttpServer,
+  ApolloServerPluginLandingPageGraphQLPlayground
+} from 'apollo-server-core'
 import { createServer } from 'http'
 import { GreetingResolver } from './resolvers/greeting'
 import { UserResolver } from './resolvers/user'
@@ -14,6 +17,7 @@ import cookieParser from 'cookie-parser'
 import { JwtPayload, Secret, verify } from 'jsonwebtoken'
 import { UserAuthPayload } from './types/UserAuthPayload'
 import { createToken, sendRefreshToken } from './utils/auth'
+// import cors from 'cors'
 
 const main = async () => {
   await createConnection({
@@ -28,6 +32,7 @@ const main = async () => {
 
   const app = express()
 
+  // app.use(cors({ origin: 'http://localhost:3000', credentials: true }))
   app.use(cookieParser())
 
   // To refresh token
@@ -78,14 +83,21 @@ const main = async () => {
       req,
       res
     }),
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })]
+    plugins: [
+      ApolloServerPluginDrainHttpServer({ httpServer }),
+      ApolloServerPluginLandingPageGraphQLPlayground() // added for classic playground, screw Sandbox
+    ]
   })
 
   await apolloServer.start()
 
   apolloServer.applyMiddleware({
     app,
-    cors: { origin: 'https://studio.apollographql.com', credentials: true } // in addition to change settings in studio apollo
+    // cors: { origin: 'https://studio.apollographql.com', credentials: true } // studio works, playground works, FE not working
+    cors: { origin: 'http://localhost:3000', credentials: true } // studio not working, playground works, FE works
+    // cors: false // studio not working, playground works, FE not working
+    // cors: { origin: '*', credentials: true } // everything works
+    // nothing? // everything works
   })
 
   const PORT = process.env.PORT || 4000
