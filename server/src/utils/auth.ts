@@ -22,10 +22,8 @@ export const sendRefreshToken = (res: Response, user: User) => {
     createToken('refreshToken', user),
     {
       httpOnly: true,
-      // secure: true,
-      secure: false,
+      secure: true,
       sameSite: 'none'
-      // domain: 'http://localhost:3000'
     }
   )
 }

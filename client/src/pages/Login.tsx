@@ -17,7 +17,6 @@ const Login = () => {
     if (response.data?.login.success) {
       JWTManager.setToken(response.data.login.accessToken as string)
     }
-    console.log('TOKEN FROM LOGIN', JWTManager.getToken())
     history.push('/')
   }
 
