@@ -20,6 +20,12 @@ export const sendRefreshToken = (res: Response, user: User) => {
   res.cookie(
     process.env.REFRESH_TOKEN_COOKIE_NAME as string,
     createToken('refreshToken', user),
-    { httpOnly: true, secure: true, sameSite: 'none' }
+    {
+      httpOnly: true,
+      // secure: true,
+      secure: false,
+      sameSite: 'none'
+      // domain: 'http://localhost:3000'
+    }
   )
 }

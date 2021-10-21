@@ -11,8 +11,6 @@ import reportWebVitals from './reportWebVitals'
 import JWTManager from './utils/jwt'
 import { setContext } from '@apollo/client/link/context'
 
-console.log('TOKEN', JWTManager.getToken())
-
 // const client = new ApolloClient({
 //   uri: 'http://localhost:4000/graphql',
 //   cache: new InMemoryCache(),
