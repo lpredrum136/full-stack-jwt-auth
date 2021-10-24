@@ -1,14 +1,16 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useHistory } from 'react-router-dom'
+import { AuthContext } from '../contexts/AuthContext'
 import { useLoginMutation } from '../generated/graphql'
 import JWTManager from '../utils/jwt'
 
 const Login = () => {
+  // Hooks
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-
   const history = useHistory()
   const [login, _] = useLoginMutation()
+  const { setIsAuthenticated } = useContext(AuthContext)
 
   const onSubmit = async () => {
     const response = await login({
@@ -16,6 +18,7 @@ const Login = () => {
     })
     if (response.data?.login.success) {
       JWTManager.setToken(response.data.login.accessToken as string)
+      setIsAuthenticated(true)
     }
     history.push('/')
   }

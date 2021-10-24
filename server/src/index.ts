@@ -17,7 +17,7 @@ import cookieParser from 'cookie-parser'
 import { JwtPayload, Secret, verify } from 'jsonwebtoken'
 import { UserAuthPayload } from './types/UserAuthPayload'
 import { createToken, sendRefreshToken } from './utils/auth'
-// import cors from 'cors'
+import cors from 'cors'
 
 const main = async () => {
   await createConnection({
@@ -32,11 +32,11 @@ const main = async () => {
 
   const app = express()
 
-  // app.use(cors({ origin: 'http://localhost:3000', credentials: true }))
+  app.use(cors({ origin: 'http://localhost:3000', credentials: true }))
   app.use(cookieParser())
 
   // To refresh token
-  app.post('/refresh_token', async (req, res) => {
+  app.get('/refresh_token', async (req, res) => {
     console.log(req.headers)
     console.log(req.cookies) // tuong la se doc duoc cookie nhung k duoc, can phai co cookie-parser
 

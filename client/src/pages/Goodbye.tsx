@@ -1,7 +1,7 @@
 import { useGoodbyeQuery } from '../generated/graphql'
 
 const Goodbye = () => {
-  const { data, error, loading } = useGoodbyeQuery()
+  const { data, error, loading } = useGoodbyeQuery({ fetchPolicy: 'no-cache' })
 
   if (loading) return <p>Loading....</p>
 

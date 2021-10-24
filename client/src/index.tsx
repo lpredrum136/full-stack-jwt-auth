@@ -10,6 +10,7 @@ import App from './App'
 import reportWebVitals from './reportWebVitals'
 import JWTManager from './utils/jwt'
 import { setContext } from '@apollo/client/link/context'
+import AuthContextProvider from './contexts/AuthContext'
 
 // NORMALLY COOKIE IS SET IN THIS WAY, BUT NO AUTHENTICATED REQUEST IS SENT
 // const client = new ApolloClient({
@@ -48,9 +49,11 @@ const client = new ApolloClient({
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
+    <AuthContextProvider>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    </AuthContextProvider>
   </ApolloProvider>,
 
   document.getElementById('root')
