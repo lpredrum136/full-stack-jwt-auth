@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios'
+// import axios, { AxiosError } from 'axios'
 import { useState, useEffect, useContext } from 'react'
 import { BrowserRouter, Switch, Route, Link } from 'react-router-dom'
 import { AuthContext } from './contexts/AuthContext'
@@ -16,26 +16,33 @@ const App = () => {
 
   useEffect(() => {
     const authenticate = async () => {
-      try {
-        const token = JWTManager.getToken()
+      // try {
+      //   const token = JWTManager.getToken()
 
-        if (!token) {
-          const response = await axios.get<{
-            success: boolean
-            accessToken: string
-          }>('http://localhost:4000/refresh_token', {
-            withCredentials: true
-          })
+      //   if (!token) {
+      //     const response = await axios.get<{
+      //       success: boolean
+      //       accessToken: string
+      //     }>('http://localhost:4000/refresh_token', {
+      //       withCredentials: true
+      //     })
 
-          JWTManager.setToken(response.data.accessToken)
-        }
-        setIsAuthenticated(true)
-      } catch (error) {
-        if ((error as AxiosError).response?.status === 401) {
-          console.log('NOT AUTHENTICATED', (error as AxiosError).response)
-        }
-      } finally {
-        setLoading(false)
+      //     JWTManager.setToken(response.data.accessToken)
+      //   }
+      //   setIsAuthenticated(true)
+      // } catch (error) {
+      //   if ((error as AxiosError).response?.status === 401) {
+      //     console.log('NOT AUTHENTICATED', (error as AxiosError).response)
+      //   }
+      // } finally {
+      //   setLoading(false)
+      // }
+
+      const token = JWTManager.getToken()
+      if (!token) {
+        await JWTManager.getRefreshToken()
+        if (!isAuthenticated) setIsAuthenticated(true)
+        if (loading) setLoading(false)
       }
     }
 
