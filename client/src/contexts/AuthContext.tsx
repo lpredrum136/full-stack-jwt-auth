@@ -11,16 +11,26 @@ interface AuthContextDefault {
   isAuthenticated: boolean
   setIsAuthenticated: Dispatch<SetStateAction<boolean>>
   logout: () => void
+  checkAuth: () => Promise<void>
 }
 
 export const AuthContext = createContext<AuthContextDefault>({
   isAuthenticated: false,
   setIsAuthenticated: () => {},
-  logout: () => {}
+  logout: () => {},
+  checkAuth: () => Promise.resolve()
 })
 
 const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+
+  const checkAuth = async () => {
+    const token = JWTManager.getToken()
+    if (!token) {
+      const success = await JWTManager.getRefreshToken()
+      if (success) setIsAuthenticated(true)
+    }
+  }
 
   const logout = () => {
     JWTManager.deleteToken()
@@ -30,7 +40,8 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const authContextData = {
     isAuthenticated,
     setIsAuthenticated,
-    logout
+    logout,
+    checkAuth
   }
 
   return (

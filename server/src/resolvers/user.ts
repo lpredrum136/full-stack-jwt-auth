@@ -115,19 +115,23 @@ export class UserResolver {
     }
   }
 
-  @Mutation(_return => Boolean)
-  async revokeRefreshTokens(
-    @Arg('userId', _type => ID) userId: number
-  ): Promise<boolean> {
+  // This can also be used as a revokeRefreshTokens call
+  @Mutation(_return => UserMutationResponse)
+  async logout(
+    @Arg('userId', _type => ID) userId: number,
+    @Ctx() { res }: Context
+  ): Promise<UserMutationResponse> {
     const existingUser = await User.findOne(userId)
 
     if (!existingUser) {
-      return false
+      return { code: 400, success: false }
     }
 
     existingUser.tokenVersion += 1
     await existingUser.save()
-    return true
+    res.clearCookie(process.env.REFRESH_TOKEN_COOKIE_NAME as string)
+
+    return { code: 200, success: true }
   }
 
   // @Mutation(_return => Boolean)

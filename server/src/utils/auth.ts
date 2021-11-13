@@ -23,7 +23,8 @@ export const sendRefreshToken = (res: Response, user: User) => {
     {
       httpOnly: true,
       secure: true,
-      sameSite: 'lax'
+      sameSite: 'lax',
+      path: '/refresh_token'
     }
   )
 }

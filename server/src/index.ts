@@ -79,10 +79,7 @@ const main = async () => {
       resolvers: [GreetingResolver, UserResolver],
       validate: false
     }),
-    context: ({ req, res }): Pick<Context, 'req' | 'res'> => ({
-      req,
-      res
-    }),
+    context: ({ req, res }): Pick<Context, 'req' | 'res'> => ({ req, res }),
     plugins: [
       ApolloServerPluginDrainHttpServer({ httpServer }),
       ApolloServerPluginLandingPageGraphQLPlayground() // added for classic playground, screw Sandbox

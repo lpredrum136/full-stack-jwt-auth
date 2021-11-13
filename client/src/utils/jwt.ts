@@ -5,13 +5,17 @@ const JWTManager = () => {
   const LOGOUT_EVENT_NAME = 'jwt-logout'
   let inMemoryToken: string | null = null
   let refreshTokenTimeoutId: number | null = null
+  let userId: number | null = null
+
+  const getUserId = () => userId
 
   const getToken = () => inMemoryToken
 
   const setToken = (accessToken: string) => {
     inMemoryToken = accessToken
     // Decode and set countdown to refresh
-    const decoded = jwtDecode<JwtPayload>(accessToken)
+    const decoded = jwtDecode<JwtPayload & { userId: number }>(accessToken)
+    userId = decoded.userId
     setRefreshTokenTimeout((decoded.exp as number) - (decoded.iat as number))
 
     return true
@@ -42,11 +46,13 @@ const JWTManager = () => {
       const accessToken = response.data.accessToken
       // console.log('ACCESS TOKEN', accessToken)
       setToken(accessToken)
+      return true
     } catch (error) {
       if ((error as AxiosError).response?.status === 401) {
         deleteToken()
         console.log('NOT AUTHENTICATED', (error as AxiosError).response)
       }
+      return false
     }
   }
 
@@ -61,7 +67,7 @@ const JWTManager = () => {
     if (refreshTokenTimeoutId) window.clearTimeout(refreshTokenTimeoutId)
   }
 
-  return { getToken, setToken, deleteToken, getRefreshToken }
+  return { getToken, setToken, deleteToken, getRefreshToken, getUserId }
 }
 
 export default JWTManager()
