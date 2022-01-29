@@ -1,0 +1,39 @@
+git init 
+mkdir server 
+cd server
+yarn init
+
+yarn add -D @types/node typescript nodemon @types/express ts-node @types/cors @types/jsonwebtoken
+
+yarn add pg apollo-server-express apollo-server-core express graphql typeorm type-graphql reflect-metadata dotenv dataloader class-validator argon2 cors jsonwebtoken
+
+npx tsconfig.json hoac yarn add global tsconfig.json then tsconfig.json (no need to npx)
+
+phai chinh mot chut de nhan duoc cookies refresh token o playground
+
+FRONT_END
+yarn create react-app client --template typescript
+xoa App.css, index.css, 
+
+add them vao tsconfig.json de tang do kho
+https://studio.apollographql.com/sandbox/explorer
+yarn start
+
+yarn add @apollo/client graphql
+yarn add -D @graphql-codegen/cli
+yarn graphql-codegen init
+- React
+- Where is schema: http://localhost:4000/graphql
+- WHere to store operations and fragments? we already have a src/graphql-client folder (for testing earlier), enter src/graphql-client/**/*.graphql
+
+- Pick plugins: keep default (3 selected)
+- Where to write output: default
+- Introsepction: No
+- Name the config: default (codegen.yml)
+- What script? codegen
+
+yarn install
+yarn codegen
+yarn add react-router-dom
+yarn add -D @types/react-router-dom
+yarn add axios jwt-decode
