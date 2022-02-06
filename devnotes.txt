@@ -24,7 +24,7 @@ yarn add -D @graphql-codegen/cli
 yarn graphql-codegen init
 - React
 - Where is schema: http://localhost:4000/graphql
-- WHere to store operations and fragments? we already have a src/graphql-client folder (for testing earlier), enter src/graphql-client/**/*.graphql
+- WHere to store operations and fragments? we already have a src/graphql-client folder (for testing earlier), enter src/graphql/**/*.graphql
 
 - Pick plugins: keep default (3 selected)
 - Where to write output: default
